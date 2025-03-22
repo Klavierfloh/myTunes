@@ -16,7 +16,7 @@ private:
     bool clicked = false;
     std::string path;
     int headSize;
-    std::tuple<std::string, std::string, std::string> parsedMusicPath;
+    std::string parsedMusicPath;
 
 public:
     Box();

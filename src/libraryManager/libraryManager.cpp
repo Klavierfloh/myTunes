@@ -60,6 +60,7 @@ void LibraryManager::indexLibrary(string path, int level)
         if (std::filesystem::is_directory(files[i]) && level == 1)
         {
             albumLibraryFile << get<2>(parseMusicPath(files[i].string())) << "\n";
+            albumIndex.push_back(get<2>(parseMusicPath(files[i].string())));
             cout << get<2>(parseMusicPath(files[i].string())) << "\n";
         }
     }
@@ -80,4 +81,9 @@ void LibraryManager::indexLibrary(string path, int level)
 vector<std::filesystem::path>* LibraryManager::getLibraryIndex()
 {
     return &index;
+}
+
+vector<std::string>* LibraryManager::getLibraryAlbumIndex()
+{
+    return &albumIndex;
 }

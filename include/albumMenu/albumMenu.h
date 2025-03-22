@@ -20,7 +20,7 @@ public:
     void render() override;
     void process() override;
     void event(std::string eventString, std::string eventObject) override;
-    void setAlbum();
+    void setAlbum(std::string albumName);
 };
 
 #endif
