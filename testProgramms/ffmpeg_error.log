@@ -1,0 +1,77 @@
+ffmpeg version 2025-03-20-git-76f09ab647-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 14.2.0 (Rev1, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      59. 60.100 / 59. 60.100
+  libavcodec     61. 33.102 / 61. 33.102
+  libavformat    61.  9.107 / 61.  9.107
+  libavdevice    61.  4.100 / 61.  4.100
+  libavfilter    10.  9.100 / 10.  9.100
+  libswscale      8. 13.103 /  8. 13.103
+  libswresample   5.  4.100 /  5.  4.100
+  libpostproc    58.  4.100 / 58.  4.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '10_Interstellar.m4a':
+  Metadata:
+    major_brand     : M4A 
+    minor_version   : 0
+    compatible_brands: M4A mp42isom
+    creation_time   : 2023-12-27T23:27:25.000000Z
+    title           : Interstellar
+    artist          : Marteria Feat. Yasha
+    composer        : Marteria
+    album           : 5. Dimension
+    genre           : Rap
+    track           : 10/12
+    disc            : 1/1
+    date            : 2021
+    compilation     : 1
+    gapless_playback: 0
+    encoder         : iTunes 12.12.7.1
+    iTunSMPB        :  00000000 00000840 000002F4 0000000000999CCC 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    Encoding Params : vers
+    iTunNORM        :  00000C6B 00000DB4 00006201 00006EF5 000322FE 0000E9EC 00007E3E 00007E3E 000071EC 00006D91
+    iTunes_CDDB_IDs : 12++
+    UFIDhttp://www.cddb.com/id3/taginfo1.html: 䌳㍄ㅍ㤰ㅐ㤱㔵㤴ㄹ嘶㠸䘹㉄㥂㉂䙁䍄䅄㔱㌴㈷㉆䄶㙄䘰䄴㤳ぐ
+  Duration: 00:03:48.35, start: 0.047891, bitrate: 260 kb/s
+  Stream #0:0[0x1](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 259 kb/s (default)
+    Metadata:
+      creation_time   : 2023-12-27T23:27:25.000000Z
+      vendor_id       : [0][0][0][0]
+Stream mapping:
+  Stream #0:0 -> #0:0 (aac (native) -> pcm_f32le (native))
+Press [q] to stop, [?] for help
+Output #0, f32le, to 'pipe:':
+  Metadata:
+    major_brand     : M4A 
+    minor_version   : 0
+    compatible_brands: M4A mp42isom
+    UFIDhttp://www.cddb.com/id3/taginfo1.html: 䌳㍄ㅍ㤰ㅐ㤱㔵㤴ㄹ嘶㠸䘹㉄㥂㉂䙁䍄䅄㔱㌴㈷㉆䄶㙄䘰䄴㤳ぐ
+    title           : Interstellar
+    artist          : Marteria Feat. Yasha
+    composer        : Marteria
+    album           : 5. Dimension
+    genre           : Rap
+    track           : 10/12
+    disc            : 1/1
+    date            : 2021
+    compilation     : 1
+    gapless_playback: 0
+    iTunes_CDDB_IDs : 12++
+    iTunSMPB        :  00000000 00000840 000002F4 0000000000999CCC 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    Encoding Params : vers
+    iTunNORM        :  00000C6B 00000DB4 00006201 00006EF5 000322FE 0000E9EC 00007E3E 00007E3E 000071EC 00006D91
+    encoder         : Lavf61.9.107
+  Stream #0:0(und): Audio: pcm_f32le, 44100 Hz, stereo, flt, 2822 kb/s (default)
+    Metadata:
+      encoder         : Lavc61.33.102 pcm_f32le
+      creation_time   : 2023-12-27T23:27:25.000000Z
+      vendor_id       : [0][0][0][0]
+[aost#0:0/pcm_f32le @ 0000023f6cb2e000] Error submitting a packet to the muxer: Broken pipe
+    Last message repeated 1 times
+[out#0/f32le @ 0000023f6cb2d8c0] Error muxing a packet
+[out#0/f32le @ 0000023f6cb2d8c0] Task finished with error code: -32 (Broken pipe)
+[out#0/f32le @ 0000023f6cb2d8c0] Terminating thread with return code -32 (Broken pipe)
+[out#0/f32le @ 0000023f6cb2d8c0] Error writing trailer: Broken pipe
+[out#0/f32le @ 0000023f6cb2d8c0] Error closing file: Broken pipe
+[out#0/f32le @ 0000023f6cb2d8c0] video:0KiB audio:16KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+size=       8KiB time=00:00:00.23 bitrate= 266.3kbits/s speed=13.6x    
+Conversion failed!

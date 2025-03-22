@@ -1,0 +1,10 @@
+#ifndef CONSTDEFINITIONS_H
+#define CONSTDEFINITIONS_H
+
+#define STARTBUTTON  1
+#define PAUSEBUTTON  2
+#define STOPBUTTON  3
+#define RESUMEBUTTON 4
+
+
+#endif
