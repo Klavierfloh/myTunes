@@ -32,7 +32,7 @@ void Box::process()
 
 void Box::event(std::string eventString, std::string eventObject)
 {
-    if (eventString == "mouseWheelMoved")
+    if (eventString == "mouseWheelMoved" && canScroll)
     {
         posy += 10*stoi(eventObject);
         return;
@@ -44,3 +44,7 @@ void Box::event(std::string eventString, std::string eventObject)
         return;
     }
 }
+
+void Box::lockScroll(){canScroll = false;}
+
+void Box::unlockScroll(){canScroll = true;}

@@ -16,9 +16,9 @@ class LibraryManager : public GameObject
         ofstream albumLibraryFile;
         vector<std::filesystem::path> index;
         vector<std::string> albumIndex;
-        vector<std::filesystem::path> getInDirectory(string path);
     public:
         LibraryManager(Scene* scene);
+        vector<std::filesystem::path> getInDirectory(string path);
 
         void setLibraryPathRoot(string path);
 

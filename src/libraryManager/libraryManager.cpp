@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <tuple>
 #include "../../include/utils.h"
 
 using std::cout;
@@ -59,9 +60,10 @@ void LibraryManager::indexLibrary(string path, int level)
         }
         if (std::filesystem::is_directory(files[i]) && level == 1)
         {
-            albumLibraryFile << get<2>(parseMusicPath(files[i].string())) << "\n";
-            albumIndex.push_back(get<2>(parseMusicPath(files[i].string())));
-            cout << get<2>(parseMusicPath(files[i].string())) << "\n";
+            std::tuple<std::string, std::string, std::string> info = parseMusicPath(files[i].string());
+            albumLibraryFile << get<1>(info) << "\\"<<get<2>(info) << "\n";
+            albumIndex.push_back(get<1>(info) + "\\"  + get<2>(info));
+            cout << (get<1>(info) + "\\"  + get<2>(info)) << "\n";
         }
     }
 

@@ -3,9 +3,10 @@
 #include "../../include/musicPlayer/musicPlayer.h"
 #include <iostream>
 #include "../../include/utils.h"
+#include <vector>
 using namespace std;
 
-MusicPlayer::MusicPlayer() : isPlaying(false), isLoaded(false) {}
+MusicPlayer::MusicPlayer() : isPlaying(false), isLoaded(false), m4a(false), m4aPrev(nullptr) {}
 
 void MusicPlayer::play()
 {
@@ -13,61 +14,153 @@ void MusicPlayer::play()
     isPlaying = true;
 }
 
-void MusicPlayer::changeMusic(const string &path)
+struct AudioData
 {
+    std::vector<float> pcmData;
+    unsigned int sampleRate = 44100;
+    unsigned int channels = 2;
+    size_t pcmIndex = 0;   // Track playback position
+    bool isPaused = false; // NEW: Track if playback is paused
+} audio;
+
+bool LoadM4AWithFFmpeg(const char *filename)
+{
+    std::string command = "ffmpeg -hide_banner -loglevel error -i \"" + std::string(filename) + "\" -f f32le -ac 2 -ar 44100 -";
+
+    FILE *pipe = popen(command.c_str(), "rb"); // Open FFmpeg process in binary mode
+    if (!pipe)
+    {
+        std::cerr << "Failed to run FFmpeg!" << std::endl;
+        return false;
+    }
+
+    float sample;
+    while (fread(&sample, sizeof(float), 1, pipe) == 1)
+    {
+        audio.pcmData.push_back(sample);
+    }
+
+    pclose(pipe);
+
+    if (audio.pcmData.empty())
+    {
+        std::cerr << "Decoded audio is empty!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+void AudioStreamCallback(void *buffer, unsigned int frames)
+{
+    float *outBuffer = static_cast<float *>(buffer);
+    size_t samplesToCopy = frames * audio.channels;
+
+    if (audio.isPaused)
+    {
+        // Fill the buffer with silence when paused
+        for (size_t i = 0; i < samplesToCopy; i++)
+        {
+            outBuffer[i] = 0.0f;
+        }
+        return;
+    }
+
+    // Normal playback
+    for (size_t i = 0; i < samplesToCopy; i++)
+    {
+        if (audio.pcmIndex < audio.pcmData.size())
+        {
+            outBuffer[i] = audio.pcmData[audio.pcmIndex++];
+        }
+        else
+        {
+            outBuffer[i] = 0.0f; // Fill remaining buffer with silence
+        }
+    }
+}
+
+int MusicPlayer::changeMusic(const string &path)
+{
+    bool wasM4A = m4a; // Store previous format
+
     if (isPlaying)
     {
         StopMusicStream(music);
         isPlaying = false;
     }
+
     if (isLoaded)
     {
-        UnloadMusicStream(music);
-        isLoaded = false;
-    }
-
-    music = LoadMusicStream(path.c_str());
-    if (music.frameCount > 0)
-    {
-        /*if (ends_with(path, ".m4a"))
+        if (wasM4A)
         {
-            ma_decoder decoder;
-            if (ma_decoder_init_file(path.c_str(), NULL, &decoder) != MA_SUCCESS)
+            std::cout << "Unloading previous M4A audio stream..." << std::endl;
+
+            // Ensure callback is removed before unloading the stream
+            SetAudioStreamCallback(music.stream, NULL);
+
+            if (music.stream.buffer != NULL)
             {
-                cout << "Failed to initialize decoder for " << path << endl;
-                return;
+                UnloadAudioStream(music.stream);
             }
-
-            ma_uint32 sampleRate = decoder.outputSampleRate;
-            ma_uint32 channels = decoder.outputChannels;
-
-            music.stream = LoadAudioStream(sampleRate, 16, channels);
-
-            ma_uint64 frameCount = 0;
-            ma_decoder_get_length_in_pcm_frames(&decoder, &frameCount);
-            music.frameCount = frameCount;
-
-            PlayAudioStream(music.stream);
-
-            ma_decoder_uninit(&decoder); // Free decoder after use
         }
         else
         {
-            music = LoadMusicStream(path.c_str());
-            play();
-        }*/
-        // music = LoadMusicStream(path.c_str());
-        play();
-        isLoaded = true;
-        musicPath = path;
+            std::cout << "Unloading previous MP3/WAV/OGG music stream..." << std::endl;
+            UnloadMusicStream(music);
+        }
+        isLoaded = false;
+    }
+
+    // Reset audio data safely
+    audio.pcmData.clear();
+    audio.pcmData.shrink_to_fit();
+    audio.pcmIndex = 0;
+    audio.isPaused = false;
+    audio = AudioData(); // Reset struct
+
+    m4a = false; // Default to non-M4A format
+
+    if (ends_with(path, ".m4a"))
+    {
+        std::cout << "Loading M4A file: " << path << std::endl;
+
+        if (!LoadM4AWithFFmpeg(path.c_str()))
+        {
+            std::cerr << "Failed to decode M4A audio.\n";
+            return -1;
+        }
+
+        std::cout << "Decoded PCM samples: " << audio.pcmData.size() << std::endl;
+
+        // Load custom PCM stream for M4A
+        music.stream = LoadAudioStream(audio.sampleRate, 32, audio.channels);
+        music.frameCount = audio.pcmData.size() / audio.channels;
+        music.looping = false;
+
+        // Ensure callback is set AFTER stream is loaded
+        SetAudioStreamCallback(music.stream, AudioStreamCallback);
+        m4a = true;
     }
     else
     {
-        /**/
-        cout << "Music failed to load: " << path << endl;
-        isPlaying = false;
+        std::cout << "Loading non-M4A file: " << path << std::endl;
+        music = LoadMusicStream(path.c_str());
+
+        if (music.frameCount == 0)
+        {
+            std::cerr << "Music failed to load: " << path << std::endl;
+            return -1;
+        }
     }
+
+    play();
+    isLoaded = true;
+    musicPath = path;
+
+    return 1;
 }
+
 
 string MusicPlayer::getSongName()
 {
@@ -84,9 +177,23 @@ void MusicPlayer::update()
 
 void MusicPlayer::pause()
 {
+    if (isLoaded)
+    {
+        if (m4a)
+        {
+            audio.isPaused = true;
+        }
+        else
+            PauseMusicStream(music);
+        isPlaying = false;
+    }
+}
+
+/*void MusicPlayer::pause()
+{
     PauseMusicStream(music);
     isPlaying = false;
-}
+}*/
 
 void MusicPlayer::stop()
 {
@@ -97,15 +204,27 @@ void MusicPlayer::stop()
         isLoaded = false;
     }
 }
-
 void MusicPlayer::resume()
+{
+    if (isLoaded)
+    {
+        if (m4a)
+        {
+            audio.isPaused = false;
+        }
+        else
+            ResumeMusicStream(music);
+        isPlaying = true;
+    }
+}
+/*void MusicPlayer::resume()
 {
     if (isLoaded)
     {
         ResumeMusicStream(music);
         isPlaying = true;
     }
-}
+}*/
 
 bool MusicPlayer::getIsPlaying()
 {
@@ -127,4 +246,7 @@ MusicPlayer::~MusicPlayer()
         PauseMusicStream(music);
         UnloadMusicStream(music);
     }
+
+    audio.pcmData.clear();
+    audio.pcmData.shrink_to_fit();
 }

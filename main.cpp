@@ -55,12 +55,13 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "myTunes");
     InitAudioDevice();
 
-    Body body = Body(&scene, 0, 100, 20*(widthInBoxes+1) + (100)*(widthInBoxes), 350, &manager);//Reihenfolge von body und head ist wichtig, sonst "sizeSet" nicht richtig gefeuert
+    int bodyWidth = (20*(widthInBoxes+1) + (100)*(widthInBoxes));
+    Body body = Body(&scene, 0, 100, bodyWidth, screenHeight, &manager);//Reihenfolge von body und head ist wichtig, sonst "sizeSet" nicht richtig gefeuert
     Header head = Header(&scene, 0, 0, (int)(GetScreenWidth()), 100);
     scene.addObject(&body); 
     scene.addObject(&head);
 
-    AlbumMenu menuRight = AlbumMenu(&scene,(int)(screenWidth/3.0) * 2,100,screenWidth -( 20*(widthInBoxes+1) + (100)*(widthInBoxes)),screenHeight, &manager);
+    AlbumMenu menuRight = AlbumMenu(&scene,bodyWidth,100,screenWidth-bodyWidth,screenHeight, &manager);
     scene.addObject(&menuRight);
 
     SetMasterVolume(10.0);

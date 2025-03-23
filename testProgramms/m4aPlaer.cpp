@@ -7,6 +7,7 @@
 namespace raylib {
 #include "raylib.h"
 }
+//compile with g++ m4aPlaer.cpp -o play_m4a.exe  -lraylib -lopengl32 -lgdi32 -lwinmm
 
 // Global structure to store decoded PCM data
 struct AudioData {
@@ -80,6 +81,7 @@ int main() {
 
     // Set our custom callback for streaming audio (no userData needed)
     raylib::SetAudioStreamCallback(music.stream, AudioStreamCallback);
+    raylib::SetMusicVolume(music, 0.5);
 
     // Start playing the music stream
     raylib::PlayMusicStream(music);

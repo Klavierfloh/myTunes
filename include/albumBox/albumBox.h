@@ -16,6 +16,7 @@ private:
     bool clicked = false;
     std::string path;
     int headSize;
+    bool canScroll = true;
     std::string parsedMusicPath;
 
 public:
@@ -27,6 +28,9 @@ public:
     void process() override;
 
     void event(std::string eventString, std::string eventObject) override;
+
+    void lockScroll();
+    void unlockScroll();
 };
 
 #endif

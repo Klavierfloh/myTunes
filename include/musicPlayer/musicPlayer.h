@@ -14,13 +14,15 @@ private:
     bool isPlaying = false;
     string musicPath = "";
     bool isLoaded = false;
+    bool m4a = false;
+    bool m4aPrev = false;
 
     void play();                              // Play the music
     bool loadMusicStream(const string &path); // Load music stream (handle .m4a separately)
 
 public:
     MusicPlayer();
-    void changeMusic(const string &path);
+    int changeMusic(const string &path);
     tuple<float, float, float> getMusicInfo();
     string getSongName();
     bool getIsPlaying();

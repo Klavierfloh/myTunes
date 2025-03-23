@@ -1,34 +1,63 @@
 #include "../../include/body/body.h"
 #include "../../include/libraryManager/libraryManager.h"
 #include "raylib.h"
+#include "raymath.h"
 #include "../../include/albumBox/albumBox.h"
 
 Body::Body(Scene *scene, int pox, int poy, int wit, int heit, LibraryManager *libman)
-    : GameObject(scene), posx(pox), posy(poy), width(wit - 120), height(heit)
+    : GameObject(scene), posx(pox), posy(poy), width(wit), height(heit)
 {
     index = libman->getLibraryAlbumIndex();
     using namespace std;
     int widthBut = 100;
-    int maxWidthInButtons = (width) / widthBut;
+    int maxWidthInButtons = (width- 120) / widthBut;
+
+    albumBoxes.clear();
     for (int i = 0; i < (int)(index->size()); i++)
     {
         int level = i / (maxWidthInButtons);
-        int posxB = 20 + posx + (i * widthBut) + 20 * i - ((level) * (width + widthBut));
+        int posxB = 20 + posx + (i * widthBut) + 20 * i - ((level) * (width- 120 + widthBut));
         int posyB = posy + 20 + ((level)*widthBut) + 20 * (level - 1);
         Box *b = new Box(scene, posxB, posyB, widthBut, widthBut, (*index)[i]);
-        scene->addObject(b);
+        albumBoxes.push_back(b);
     }
 }
-Body::~Body() {}
+Body::~Body()
+{
+    albumBoxes.clear();
+}
 
-void Body::render() {}
+void Body::render()
+{
+    DrawRectangle(posx,posy,width,height,LIGHTGRAY);
+    for (auto album : albumBoxes)
+    {
+        album->render();
+    }
+}
 void Body::process()
 {
-
-    using namespace std;
-    /*for (int i = 0; i < (int)(index->size()); i++)
+    Vector2 mouse = GetMousePosition();
+    if (mouse.x > posx && mouse.x < posx + width && mouse.y > posy && mouse.y < posy + height)
     {
-        DrawRectangle(posx + (110 * i), posy + 20, 100, 100,RED);
-        DrawText((*index)[i].string().c_str(),posx + (110 * i), posy + 20,10,BLACK );
-    }*/
+        isHovered = true;
+    }
+    else
+        isHovered = false;
+
+    for (auto album : albumBoxes)
+    {
+        if (!isHovered)
+        {
+            album->lockScroll();
+        }
+        else
+            album->unlockScroll();
+        album->process();
+    }
+}
+
+bool Body::getIsHovered()
+{
+    return isHovered;
 }
